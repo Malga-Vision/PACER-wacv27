@@ -25,6 +25,6 @@
   "base_weight_decay": 1e-4,
   "base_early_stopping_patience": 15,
 
-  "initial_labeled": 10,
+  "initial_labeled": 5,
   "grid_samples": 6
 }

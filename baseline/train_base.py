@@ -2,7 +2,7 @@
 
 Protocol (spec §5):
   1. Seed 42, GPU from config.
-  2. Load splits; pick 10 oracle ids via `select_initial_labeled(seed=42)`.
+  2. Load splits; pick `initial_labeled` oracle ids via `select_initial_labeled(seed)`.
   3. AdamW(base_learning_rate, base_weight_decay), no scheduler.
   4. Up to base_epochs with early stopping on val_loss (patience 15).
   5. Persist best-val-loss checkpoint + base_metrics.json + ids + run_config
