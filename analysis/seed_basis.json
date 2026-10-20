@@ -1,0 +1,228 @@
+{
+ "cephalo_10_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_10_fixmatch_pose": [
+  7,
+  90,
+  123
+ ],
+ "cephalo_10_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_10_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_10_mean_teacher": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_10_pacer4": [
+  14,
+  42,
+  90
+ ],
+ "cephalo_5_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_5_fixmatch_pose": [
+  7,
+  14,
+  123
+ ],
+ "cephalo_5_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_5_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_5_mean_teacher": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "cephalo_5_pacer4": [
+  14,
+  42,
+  90
+ ],
+ "chest_10_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_10_fixmatch_pose": [
+  7,
+  14,
+  123
+ ],
+ "chest_10_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_10_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_10_mean_teacher": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_10_pacer4": [
+  14,
+  42,
+  90
+ ],
+ "chest_5_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_5_fixmatch_pose": [
+  7,
+  42,
+  123
+ ],
+ "chest_5_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_5_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_5_mean_teacher": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "chest_5_pacer4": [
+  14,
+  42,
+  90
+ ],
+ "hand_10_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_10_fixmatch_pose": [
+  14,
+  90,
+  123
+ ],
+ "hand_10_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_10_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_10_mean_teacher": [
+  7,
+  42,
+  90,
+  123
+ ],
+ "hand_10_pacer4": [
+  14,
+  42,
+  90
+ ],
+ "hand_5_base": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_5_fixmatch_pose": [
+  14,
+  42,
+  123
+ ],
+ "hand_5_flexmatch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_5_freematch": [
+  7,
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_5_mean_teacher": [
+  14,
+  42,
+  90,
+  123
+ ],
+ "hand_5_pacer4": [
+  14,
+  42,
+  90
+ ]
+}

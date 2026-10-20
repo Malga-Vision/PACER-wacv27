@@ -1,0 +1,35 @@
+{
+  "_comment": "PACER ablation: shape of the admission ramp (Suppl. Shape of the admission ramp, Fig. shape, Tabs. supp_shape5/10). pi_t = cap * (t/T)^schedule_gamma with T=4, cap=100 and the 120-epoch budget fixed; this file is the convex (back-loaded) ramp, gamma=2: percentiles 6.25, 25, 56.25, 100. The linear ramp (gamma=1) is the canonical PACER of pacer/configs/finetune.json.",
+
+  "dataset": "cephalo",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "finetune_learning_rate": 1e-5,
+  "finetune_weight_decay": 1e-4,
+
+  "initial_labeled": 5,
+
+  "num_stages": 4,
+  "percentile_cap": 100.0,
+  "total_epochs": 120,
+  "schedule_gamma": 2.0,
+
+  "finetune_checkpoint_path": null,
+  "grid_samples": 6
+}

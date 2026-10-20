@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.log
+*.aux
+*.out
+*.toc
+tmux_logs_*/
+plots/
+*.pth
+*.pt

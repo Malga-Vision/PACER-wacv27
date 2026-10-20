@@ -1,0 +1,34 @@
+{
+  "_comment": "PACER ablation: cap=60 (tail withholding — never admit hardest 40%).",
+
+  "dataset": "cephalo",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "finetune_learning_rate": 1e-5,
+  "finetune_weight_decay": 1e-4,
+
+  "initial_labeled": 10,
+
+  "num_stages": 4,
+  "percentile_cap": 60.0,
+  "total_epochs": 120,
+
+  "finetune_checkpoint_path": null,
+  "grid_samples": 6
+}

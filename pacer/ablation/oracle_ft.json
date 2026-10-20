@@ -1,0 +1,34 @@
+{
+  "_comment": "PACER control: oracle-ft (no-pool finetuning). percentile_cap=0 means the gate admits 0% of the pool, so the base detector is finetuned on the oracle set ALONE for the full budget. This is the diagnostic that isolates PACER's pool gains from extra optimization (paper ablation tables). Default = DHA (hand), 5-shot; vary dataset/initial_labeled as needed.",
+
+  "dataset": "hand",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "finetune_learning_rate": 1e-5,
+  "finetune_weight_decay": 1e-4,
+
+  "initial_labeled": 5,
+
+  "num_stages": 1,
+  "percentile_cap": 0.0,
+  "total_epochs": 120,
+
+  "finetune_checkpoint_path": null,
+  "grid_samples": 6
+}

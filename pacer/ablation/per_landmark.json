@@ -1,0 +1,35 @@
+{
+  "_comment": "PACER ablation: per-landmark ERE gating (gating=landmark). Same percentile curriculum as image-level PACER, but the gate is applied to individual landmarks (each (sample, landmark) admitted by its own ERE) instead of whole images by mean ERE. Default = DHA (hand), 5-shot, 4-stage (paper Tab. 'per-landmark vs image-level'). Vary num_stages/initial_labeled for the full sweep.",
+
+  "dataset": "hand",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "finetune_learning_rate": 1e-5,
+  "finetune_weight_decay": 1e-4,
+
+  "initial_labeled": 5,
+
+  "num_stages": 4,
+  "percentile_cap": 100.0,
+  "total_epochs": 120,
+  "gating": "landmark",
+
+  "finetune_checkpoint_path": null,
+  "grid_samples": 6
+}

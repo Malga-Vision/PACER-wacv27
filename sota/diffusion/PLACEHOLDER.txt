@@ -1,0 +1,28 @@
+Diffusion-pretrained priors (DDPM, CDPM-Align) — external, not bundled
+======================================================================
+
+The DDPM and CDPM-Align rows in the paper's main tables come from diffusion-
+pretrained few-shot landmark detectors. They are NOT reimplemented in this
+release: they require a separate generative pretraining stage (several GPU-hours
+per dataset). CDPM-Align (MICCAI 2026) is related work from our lab, with its own
+official code at https://github.com/Malga-Vision/CDPM-Align (it also covers the
+DDPM prior); see the paper's references for the original methods.
+
+This directory is intentionally a placeholder so the repository layout mirrors
+the paper's method groups. Only the combination row is reproducible here:
+
+  CDPM-Align + PACER
+    Train the CDPM-Align landmark detector on the same oracle set (same SMP U-Net /
+    ResNet-101 detector, saved as a full state dict under "model_state_dict"), then
+    run the standard PACER finetuner from that checkpoint instead of the ImageNet
+    base:
+
+      python main.py finetune --config pacer/configs/finetune.json \
+          --checkpoint /path/to/cdpm_align_detector_checkpoint.pt \
+          --override dataset=hand --override initial_labeled=5 --override seed=42 \
+          --override num_stages=4 --override percentile_cap=100
+
+    The oracle/pool split is still read from the base run of that (dataset, seed,
+    budget) when present (or re-derived from the seed), so the pool is identical.
+    The ERE percentile curriculum then mines the pool from that prior, exactly as
+    it does from the ImageNet base detector.

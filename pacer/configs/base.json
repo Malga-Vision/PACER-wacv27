@@ -1,0 +1,30 @@
+{
+  "_comment": "Base detector training config (oracle-labeled samples only).",
+
+  "dataset": "cephalo",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "base_epochs": 200,
+  "base_learning_rate": 1e-4,
+  "base_weight_decay": 1e-4,
+  "base_early_stopping_patience": 15,
+
+  "initial_labeled": 10,
+  "grid_samples": 6
+}

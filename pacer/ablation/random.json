@@ -1,0 +1,35 @@
+{
+  "_comment": "PACER ablation: selection-signal control (random admission). Same curriculum and per-stage budget as PACER, but each stage fills its budget with a uniformly random subset instead of the lowest-ERE samples. Default = DHA (hand), 5-shot, 4-stage (paper Tab. 'signal'). Vary num_stages/initial_labeled for the full sweep.",
+
+  "dataset": "hand",
+  "dataset_root": "/path/to/datasets",
+  "output_dir": "/path/to/results",
+
+  "gpu": 0,
+  "seed": 42,
+
+  "architecture": "smp_unet",
+  "encoder": "resnet101",
+  "encoder_weights": "imagenet",
+  "pretrained_path": null,
+  "image_size": [256, 256],
+  "image_channels": 1,
+  "sigma": 0.0,
+
+  "batch_size": 8,
+  "num_workers": 4,
+  "pin_memory": true,
+
+  "finetune_learning_rate": 1e-5,
+  "finetune_weight_decay": 1e-4,
+
+  "initial_labeled": 5,
+
+  "num_stages": 4,
+  "percentile_cap": 100.0,
+  "total_epochs": 120,
+  "admission_random": true,
+
+  "finetune_checkpoint_path": null,
+  "grid_samples": 6
+}
