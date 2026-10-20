@@ -60,7 +60,6 @@ OPTIONAL_CONFIG_KEYS = {
     "gating",
     "admission_random",
     "schedule_gamma",
-    "dump_stage_artifacts",
 }
 
 

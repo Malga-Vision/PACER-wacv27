@@ -138,7 +138,6 @@ material). Training commands produce the runs; the `analysis/` scripts aggregate
 | **Suppl. Figs. 5 / 3, Suppl. Tab. 12** ranking quality (ERE vs peak confidence, entropy, 11-view TTA, anisotropic-Gaussian read-out; Spearman / Pearson) | base checkpoints only | `analysis/ranking_quality.py` (writes `ranking_quality_{5,10}shot.pdf` + Tab. 12 rows) |
 | **Suppl. Tabs. 13–14** image-level vs per-landmark gating | `finetune --config pacer/ablation/per_landmark.json ... num_stages∈{1,2,4,8}` | `analysis/summarize.py --runs step-<T>_cap100/per_landmark step-<T>_cap100/percentile` |
 | **Suppl. Fig. 6 (self-tightening)** mean admitted ERE per stage, Π = 100 vs 60 | 4-stage runs at both caps | `analysis/self_tightening.py` (writes `self_tightening_caps.pdf`) |
-| **Fig. 1** (5-shot) / **Suppl. Fig. 6 (per-image)** (10-shot) per-image self-tightening | 4-stage `finetune ... --override seed=14 --override dump_stage_artifacts=true` | `analysis/self_tightening_qual.py --budget {5,10}` |
 | **Suppl. Tab. 15** per-landmark clinical gain | base + PACER 4-stage runs | `analysis/per_landmark_gain.py` |
 | **Suppl. Tabs. 16–17** robust statistics (median, IQR) | base, SSL and PACER 4-stage runs | `analysis/dump_sample_errors.py` then `analysis/robust_stats.py` |
 
@@ -228,7 +227,6 @@ below maps to one paper experiment and can be set in the config or via `--overri
 | `total_epochs` (E) | int | Matched compute budget, split into T equal stages. Default **120**. |
 | `gating` | `image` (default), `landmark` | Admit whole images by mean ERE (PACER) or individual landmarks by their own ERE under the same percentile gate. |
 | `admission_random` | `false` (default), `true` | Replace lowest-ERE ranking with a uniformly random subset of the same per-stage size (selection-signal control; image-level only). |
-| `dump_stage_artifacts` | `false` (default), `true` | Save each stage's scoring model and pool ERE (`stage_artifacts/`), used by the qualitative self-tightening figures. |
 
 ### Diffusion-pretrained priors (external)
 

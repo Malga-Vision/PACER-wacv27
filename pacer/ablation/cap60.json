@@ -1,5 +1,5 @@
 {
-  "_comment": "PACER ablation: cap=60 (tail withholding — never admit hardest 40%).",
+  "_comment": "PACER ablation: cap=60 (tail withholding — never admit hardest 40%). Default = 5-shot like the main paper (Suppl. Tab. 6); use --override initial_labeled=10 for Suppl. Tab. 7.",
 
   "dataset": "cephalo",
   "dataset_root": "/path/to/datasets",
@@ -23,7 +23,7 @@
   "finetune_learning_rate": 1e-5,
   "finetune_weight_decay": 1e-4,
 
-  "initial_labeled": 10,
+  "initial_labeled": 5,
 
   "num_stages": 4,
   "percentile_cap": 60.0,

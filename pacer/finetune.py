@@ -278,23 +278,6 @@ def run_finetune(
             )
         )
 
-        if cfg.get("dump_stage_artifacts"):
-            # Diagnostic dump for the qualitative self-tightening figures
-            # (analysis/self_tightening_qual.py): the model that scored/admitted at
-            # this stage (theta^(t-1)) and the image-level ERE of every pool sample.
-            import json
-            stage_dir = os.path.join(run_dir, "stage_artifacts")
-            os.makedirs(stage_dir, exist_ok=True)
-            scores = {
-                sid: float(np.mean(score_table[sid].get("per_landmark_ere") or [0.0]))
-                for sid in score_table
-            }
-            with open(os.path.join(stage_dir, f"stage{stage_idx}_scores.json"), "w") as handle:
-                json.dump({"stage_idx": int(stage_idx), "percentile": float(percentile),
-                           "selected_ids": list(selected_ids), "scores": scores}, handle)
-            torch.save({"model_state_dict": model.state_dict()},
-                       os.path.join(stage_dir, f"stage{stage_idx}_model.pt"))
-
         if selected_ids:
             train_records_this_stage = oracle_records + subset_records(train_by_id, selected_ids)
         else:
