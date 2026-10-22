@@ -173,6 +173,7 @@ def calculate_ere(
     if peak <= 0.0:
         return 0.0
     weights = heatmap / peak
+    # Keeps pixels above 5% of the peak and renormalizes (deviation from main-paper Eq. 2, disclosed in the supplementary).
     weights = np.where(weights > significant_pixel_cutoff, weights, 0.0)
     total = float(np.sum(weights))
     if total <= 1e-12:

@@ -56,11 +56,15 @@ to the selection mechanism, not the initialization.
 
 ```bash
 conda create -n pacer python=3.10 -y && conda activate pacer
+pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
 ```
 
-`requirements.txt` pins the versions used for the paper (PyTorch 2.4.1, CUDA 11.8). A CUDA
-GPU is required for training; runs were produced on a single NVIDIA A30.
+The paper runs used Python 3.10.15, PyTorch 2.4.1+cu118 and OpenCV 4.13.0. `requirements.txt`
+pins those versions except OpenCV, which is pinned to 4.11.0.86, the newest wheel compatible
+with NumPy 1.26 (the code only uses basic `cv2` ops). Pick the torch index URL matching your
+CUDA from [pytorch.org](https://pytorch.org). A CUDA GPU is required for training; runs were
+produced on a single NVIDIA A30.
 
 ---
 
@@ -68,9 +72,11 @@ GPU is required for training; runs were produced on a single NVIDIA A30.
 
 Point the `dataset_root` field of `pacer/configs/base.json` and `pacer/configs/finetune.json`
 (and of the ablation configs) at your local datasets directory, and `output_dir` at where the
-run tree should be written. The SSL and HRNet entrypoints inherit `dataset_root` from
-`pacer/configs/finetune.json`. Both can be overridden per run with
-`--override dataset_root=/abs/path --override output_dir=/abs/path`.
+run tree should be written. Both can be overridden per run with
+`--override dataset_root=/abs/path --override output_dir=/abs/path`. The SSL and HRNet
+entrypoints inherit `dataset_root` from `pacer/configs/finetune.json` but take the run tree
+from their own `--output_dir` flag, whose default (`/path/to/results`) is a placeholder: always
+pass it, pointing at the same `output_dir` as the base runs.
 
 | `dataset` | Benchmark | Landmarks | Train/Val/Test | Errors in |
 |-----------|-----------|-----------|----------------|-----------|
@@ -78,9 +84,53 @@ run tree should be written. The SSL and HRNet entrypoints inherit `dataset_root`
 | `cephalo` | ISBI2015 cephalometric | 19 | 130 / 20 / 250 | mm (0.1 mm/pixel) |
 | `hand` | DHA (Digital Hand Atlas) | 37 | 550 / 59 / 301 | mm (wrist width = 50 mm) |
 
+**Sources.**
+
+- **Shenzhen (chest)**: images from the
+  [Shenzhen Hospital CXR set](https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Shenzhen-Hospital-CXR-Set/index.html)
+  (Jaeger et al., 2014); 6-landmark lung-boundary labels from the `chest_labels.zip`
+  ([`data/chest_labels.zip`](https://github.com/MIRACLE-Center/YOLO_Universal_Anatomical_Landmark_Detection/blob/main/data/chest_labels.zip))
+  of Zhu et al., *You Only Learn Once* (MICCAI 2021),
+  [YOLO_Universal_Anatomical_Landmark_Detection](https://github.com/MIRACLE-Center/YOLO_Universal_Anatomical_Landmark_Detection).
+  Only the 279 images with a label file are used.
+- **ISBI2015 (cephalometric)**: the 400 lateral cephalograms of the ISBI 2015 Grand Challenge on
+  automatic cephalometric X-ray landmark detection (Wang et al., MedIA 2016), with the
+  `400_junior` / `400_senior` annotations of the two observers (also referenced from the YOLO
+  repository above).
+- **DHA (hand)**: images from the [Digital Hand Atlas](https://ipilab.usc.edu/research/baaweb)
+  (Gertych et al., 2007); 37-landmark annotations `all.csv` of Payer et al. (MedIA 2019), from
+  [MedicalDataAugmentationTool-HeatmapRegression](https://github.com/christianpayer/MedicalDataAugmentationTool-HeatmapRegression/blob/master/hand_xray/hand_xray_dataset/setup/all.csv).
+  Only the 910 images listed in `all.csv` are used.
+
+**Expected layout** under `dataset_root` (read by `shared/data.py`):
+
+```
+<dataset_root>/
+├── chest/
+│   ├── pngs/<id>.png          # the 279 labeled Shenzhen images (CHNCXR_*.png), nothing else
+│   └── labels/<id>.txt        # line 1: number of points (6); then one "x y" per line,
+│                              #   relative to image width/height (in [0, 1])
+├── cephalo/
+│   ├── jpg/<id>.jpg           # the 400 challenge images (001..400), converted from BMP to JPEG
+│   ├── 400_junior/<id>.txt    # first 19 lines: "x,y" in original-image pixels
+│   └── 400_senior/<id>.txt    # same format; ground truth = mean of junior and senior
+└── hand/
+    ├── jpg/<id>.jpg           # DHA images named by their integer id
+    └── labels/all.csv         # no header; column 0 = image id, then x1,y1,...,x37,y37 in pixels
+```
+
+**Splits** are fixed by **sorted filename**, no shuffling: chest = first 195 / next 34 / last 50;
+cephalo = first 130 / next 20 / images 151–400 (250); hand (after keeping only ids present in
+`all.csv`) = first 550 / next 59 / remaining 301.
+
+**Physical units.** Errors are computed at the 256×256 network input and multiplied by a
+per-image scaling factor. Cephalometric: inverse resize ratio × 0.1 mm/pixel. Hand: inverse
+resize ratio × (50 mm / pixel distance between landmarks 0 and 4), i.e. the wrist width is fixed
+to 50 mm as in Payer et al. Chest: no usable pixel spacing, so the factor is (1, 1) and errors
+are in pixels of the 256×256 input.
+
 The oracle set of `N` images is drawn from the training split, seeded per run; the remaining
-training images form the unlabeled pool. Pool labels are never used, only pool images. See
-`shared/data.py` for the expected on-disk format of each benchmark.
+training images form the unlabeled pool. Pool labels are never used, only pool images.
 
 ---
 
@@ -128,7 +178,7 @@ material). Training commands produce the runs; the `analysis/` scripts aggregate
 | Tab. 1 / Suppl. Tab. 3: Mean Teacher, FixMatch-pose, FlexMatch, FreeMatch | `main.py <method> ...` | `analysis/summarize.py --runs mean_teacher fixmatch_pose flexmatch freematch pacer4 --ref pacer4` (paired t-test) |
 | Tab. 1 / Suppl. Tab. 3: **PACER (4-stage)** | `finetune` (default config) | `analysis/summarize.py --runs pacer4` |
 | Tab. 1 / Suppl. Tab. 3: STLD-HRNet, PACER-HRNet (Sec. 4.5) | `main.py stld-hrnet ...`, `main.py pacer-hrnet ... --schedule_tag step-4` | `analysis/summarize.py --runs ssl/stld_hrnet step-4/pacer_hrnet` |
-| Tab. 1 / Suppl. Tab. 3: CDPM-Align + PACER | `finetune --checkpoint <cdpm_align_detector.pt>` | `analysis/summarize.py` on that run |
+| Tab. 1 / Suppl. Tab. 3: CDPM-Align + PACER | `finetune --checkpoint <cdpm_align_detector.pt> --override output_dir=<separate root>` (see [Diffusion priors](#diffusion-pretrained-priors-external)) | `analysis/summarize.py --results <separate root> --runs pacer4` |
 | Tab. 1 / Suppl. Tab. 3: CDPM-Align | external, see [Diffusion priors](#diffusion-pretrained-priors-external) | — |
 | **Suppl. Tab. 2** computational cost | wall-clock / peak memory of the runs above at matched budget (one A30) | — |
 | **Suppl. Tabs. 4–5** curriculum staging, incl. oracle-ft | `finetune ... num_stages∈{1,2,4,8}`; `finetune --config pacer/ablation/oracle_ft.json` | `analysis/summarize.py --runs flat_cap0/percentile flat_cap100/percentile step-2_cap100/percentile step-4_cap100/percentile step-8_cap100/percentile` |
@@ -137,9 +187,13 @@ material). Training commands produce the runs; the `analysis/` scripts aggregate
 | **Suppl. Tabs. 10–11** selection signal: lowest-ERE vs random | `finetune --config pacer/ablation/random.json ... num_stages∈{1,2,4,8}` | `analysis/summarize.py --runs step-<T>_cap100/random step-<T>_cap100/percentile` |
 | **Suppl. Figs. 5 / 3, Suppl. Tab. 12** ranking quality (ERE vs peak confidence, entropy, 11-view TTA, anisotropic-Gaussian read-out; Spearman / Pearson) | base checkpoints only | `analysis/ranking_quality.py` (writes `ranking_quality_{5,10}shot.pdf` + Tab. 12 rows) |
 | **Suppl. Tabs. 13–14** image-level vs per-landmark gating | `finetune --config pacer/ablation/per_landmark.json ... num_stages∈{1,2,4,8}` | `analysis/summarize.py --runs step-<T>_cap100/per_landmark step-<T>_cap100/percentile` |
-| **Suppl. Fig. 6 (self-tightening)** mean admitted ERE per stage, Π = 100 vs 60 | 4-stage runs at both caps | `analysis/self_tightening.py` (writes `self_tightening_caps.pdf`) |
+| (not in the paper) mean admitted ERE per stage, Π = 100 vs 60 | 4-stage runs at both caps | `analysis/self_tightening.py` (writes `self_tightening_caps.pdf`; extra per-stage evidence for self-tightening, not included in the camera-ready) |
 | **Suppl. Tab. 15** per-landmark clinical gain | base + PACER 4-stage runs | `analysis/per_landmark_gain.py` |
 | **Suppl. Tabs. 16–17** robust statistics (median, IQR) | base, SSL and PACER 4-stage runs | `analysis/dump_sample_errors.py` then `analysis/robust_stats.py` |
+
+The qualitative figures, **Fig. 1** (per-image self-tightening, 5-shot) and **Suppl. Fig. 6**
+(the same at 10 shots), and the pipeline diagram (**Fig. 2**) are not generated by a released
+script.
 
 All `analysis/` scripts take `--results <output_dir>` (and `--dataset-root`, `--out` where
 they run inference or write files) and never write into the run tree. Run them from the
@@ -148,10 +202,10 @@ repository root, e.g. `python analysis/ramp_shape.py --results /path/to/results 
 ### SSL baselines
 
 ```bash
-python main.py mean-teacher  --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0
-python main.py fixmatch-pose --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0
-python main.py flexmatch     --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0
-python main.py freematch     --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0
+python main.py mean-teacher  --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0 --output_dir /path/to/results
+python main.py fixmatch-pose --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0 --output_dir /path/to/results
+python main.py flexmatch     --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0 --output_dir /path/to/results
+python main.py freematch     --dataset cephalo --initial_labeled 5 --seed 42 --gpu 0 --output_dir /path/to/results
 ```
 
 SSL methods reuse the same base checkpoint and the matched 120-epoch budget; they read
@@ -166,11 +220,12 @@ count, so this matters only for per-seed bit-level comparisons).
 ```bash
 # STLD-HRNet (shrinking-sigma pseudo-label curriculum, 396 epochs)
 python main.py stld-hrnet  --dataset hand --initial_labeled 5 --seed 42 --gpu 0 \
+    --output_dir /path/to/results \
     --imagenet_weights hrnet/vendor/hrnetv2_w18_imagenet_pretrained.pth
 
 # PACER-HRNet (60-epoch oracle warmup + 4-stage percentile-ERE curriculum, 180 epochs)
 python main.py pacer-hrnet --dataset hand --initial_labeled 5 --seed 42 --gpu 0 \
-    --schedule_tag step-4 \
+    --output_dir /path/to/results --schedule_tag step-4 \
     --imagenet_weights hrnet/vendor/hrnetv2_w18_imagenet_pretrained.pth
 ```
 
@@ -240,8 +295,15 @@ full state dict) in place of the ImageNet base:
 ```bash
 python main.py finetune --config pacer/configs/finetune.json \
     --checkpoint /path/to/cdpm_align_detector_checkpoint.pt \
+    --override output_dir=/path/to/results_cdpm_align \
     --override dataset=hand --override initial_labeled=5 --override seed=42
 ```
+
+The run directory depends only on the schedule tag, not on the source checkpoint, so give this
+run its own `output_dir`: otherwise it overwrites the ImageNet-base PACER run
+(`step-4_cap100/percentile`). With no base run under that root, the oracle/pool split is
+re-derived from the seed by the same `select_initial_labeled` used by `train-base`, so the pool
+is identical.
 
 ---
 
@@ -267,7 +329,9 @@ Do not expect a single seed to match a specific cell.
 
 1. Train a base detector on a small oracle-labeled subset.
 2. At the start of each stage, score the unlabeled pool by **ERE**, a heatmap-derived
-   uncertainty in physical mm.
+   uncertainty in physical mm. Unlike the plain sum of main-paper Eq. 2, the implementation
+   (`calculate_ere` in `shared/metrics.py`) keeps only pixels above 5% of the heatmap peak and
+   renormalizes, as disclosed in the supplementary (ranking-quality section, Gaussian read-out).
 3. Admit the lowest-ERE π_t % of the pool as pseudo-labels (easiest first), freezing their
    decoded one-hot targets for the stage.
 4. Train on oracle + admitted pseudo-labels for the stage's epoch budget.

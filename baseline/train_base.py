@@ -1,7 +1,7 @@
 """Train the shared base detector (oracle-labeled only) for PACER.
 
-Protocol (spec §5):
-  1. Seed 42, GPU from config.
+Protocol (writes <output_dir>/<dataset>/seed_<seed>/active_<N>/base/):
+  1. Seed and GPU from config.
   2. Load splits; pick `initial_labeled` oracle ids via `select_initial_labeled(seed)`.
   3. AdamW(base_learning_rate, base_weight_decay), no scheduler.
   4. Up to base_epochs with early stopping on val_loss (patience 15).

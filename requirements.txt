@@ -1,9 +1,12 @@
-# Versions used for the paper runs (Python 3.10, CUDA 11.8). Install the torch build
-# matching your CUDA from https://pytorch.org first if the default wheel does not fit.
+# Paper runs used Python 3.10.15, torch 2.4.1+cu118 and OpenCV 4.13.0. OpenCV is pinned here
+# to 4.11.0.86, the newest wheel compatible with numpy 1.26 (the code only uses basic cv2 ops).
+# Install the CUDA 11.8 torch build first, e.g.
+#   pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
 torch==2.4.1
+torchvision==0.19.1
 segmentation-models-pytorch==0.5.0
 albumentations==2.0.8
-opencv-python-headless==4.13.0.90
+opencv-python-headless==4.11.0.86
 numpy==1.26.3
 pandas==2.3.3
 scipy==1.15.3

@@ -4,7 +4,7 @@ Replicates the PACER method (adaptive percentile gate on per-sample mean ERE)
 on the HRNet free-heatmap / MSE architecture. Disentangles architecture effects
 (U-Net softmax vs HRNet free-heatmap) from the PACER approach.
 
-Output: results-v2/{ds}/seed_{s}/active_{N}/{sched_tag}/pacer_hrnet/
+Output: <output_dir>/{ds}/seed_{s}/active_{N}/{sched_tag}/pacer_hrnet/
 """
 import argparse
 import json

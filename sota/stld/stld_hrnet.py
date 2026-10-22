@@ -4,7 +4,7 @@ Faithful port of STLD (Jin, Che & Chen, arXiv:2404.04556) under the original
 paper settings (HRNetV2-W18 backbone, dual heatmap head, MSE loss, shrink
 curriculum). Uses the vendored byte-exact HRNet backbone.
 
-Output: results-v2/{ds}/seed_{s}/active_{N}/ssl/stld_hrnet/
+Output: <output_dir>/{ds}/seed_{s}/active_{N}/ssl/stld_hrnet/
 """
 import argparse
 import copy

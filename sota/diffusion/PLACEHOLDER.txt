@@ -19,10 +19,13 @@ the paper's method groups. Only the combination row is reproducible here:
 
       python main.py finetune --config pacer/configs/finetune.json \
           --checkpoint /path/to/cdpm_align_detector_checkpoint.pt \
+          --override output_dir=/path/to/results_cdpm_align \
           --override dataset=hand --override initial_labeled=5 --override seed=42 \
           --override num_stages=4 --override percentile_cap=100
 
-    The oracle/pool split is still read from the base run of that (dataset, seed,
-    budget) when present (or re-derived from the seed), so the pool is identical.
+    The run directory depends only on the schedule tag, so the separate output_dir
+    keeps this run from overwriting the ImageNet-base PACER run. With no base run
+    under that root, the oracle/pool split is re-derived from the seed exactly as
+    train-base does, so the pool is identical.
     The ERE percentile curriculum then mines the pool from that prior, exactly as
     it does from the ImageNet base detector.

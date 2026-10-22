@@ -53,10 +53,11 @@ RESULTS_ROOT = "/path/to/results"
 def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--dataset", required=True, choices=["chest", "cephalo", "hand"])
     parser.add_argument("--initial_labeled", required=True, type=int)
-    parser.add_argument("--gpu", default=1, type=int)
+    parser.add_argument("--gpu", default=0, type=int)
     parser.add_argument("--seed", default=42, type=int)
     parser.add_argument("--epochs", default=120, type=int, help="matched budget E")
-    parser.add_argument("--output_dir", default=RESULTS_ROOT)
+    parser.add_argument("--output_dir", default=RESULTS_ROOT,
+                        help="results root holding the base runs; set it (the default is a placeholder)")
     parser.add_argument("--lambda_u", default=1.0, type=float, help="max unlabeled loss weight")
     parser.add_argument("--rampup_frac", default=0.1, type=float, help="fraction of epochs for consistency ramp-up")
     parser.add_argument("--override", action="append", default=[], metavar="KEY=VALUE")

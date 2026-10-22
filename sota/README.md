@@ -11,6 +11,7 @@ pool as PACER-HRNet, so the two differ only in how the pool is mined.
 
 ```bash
 python main.py stld-hrnet --dataset hand --initial_labeled 5 --seed 42 --gpu 0 \
+    --output_dir /path/to/results \
     --imagenet_weights hrnet/vendor/hrnetv2_w18_imagenet_pretrained.pth
 ```
 
@@ -27,5 +28,9 @@ standard finetuner:
 ```bash
 python main.py finetune --config pacer/configs/finetune.json \
     --checkpoint /path/to/cdpm_align_detector_checkpoint.pt \
+    --override output_dir=/path/to/results_cdpm_align \
     --override dataset=hand --override initial_labeled=5 --override seed=42
 ```
+
+The run directory depends only on the schedule tag, so the separate `output_dir` keeps this run
+from overwriting the ImageNet-base PACER run.
