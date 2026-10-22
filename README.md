@@ -95,8 +95,9 @@ pass it, pointing at the same `output_dir` as the base runs.
   Only the 279 images with a label file are used.
 - **ISBI2015 (cephalometric)**: the 400 lateral cephalograms of the ISBI 2015 Grand Challenge on
   automatic cephalometric X-ray landmark detection (Wang et al., MedIA 2016), with the
-  `400_junior` / `400_senior` annotations of the two observers (also referenced from the YOLO
-  repository above).
+  `400_junior` / `400_senior` annotations of the two observers, available on
+  [figshare](https://figshare.com/s/37ec464af8e81ae6ebbf) or
+  [Kaggle](https://www.kaggle.com/datasets/c34a0ef0cd3cfd5c5afbdb30f8541e887171f19f196b1ad63790ca5b28c0ec93?select=cepha400).
 - **DHA (hand)**: images from the [Digital Hand Atlas](https://ipilab.usc.edu/research/baaweb)
   (Gertych et al., 2007); 37-landmark annotations `all.csv` of Payer et al. (MedIA 2019), from
   [MedicalDataAugmentationTool-HeatmapRegression](https://github.com/christianpayer/MedicalDataAugmentationTool-HeatmapRegression/blob/master/hand_xray/hand_xray_dataset/setup/all.csv).
